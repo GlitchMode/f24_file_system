@@ -1,0 +1,7 @@
+.git
+.ddev
+.env
+node_modules
+public/build
+storage/logs/*
+vendor

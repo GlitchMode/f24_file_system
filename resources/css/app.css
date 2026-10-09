@@ -1,0 +1,15 @@
+:root {
+    color: #1f2937;
+    font-family: Arial, sans-serif;
+    background: #f3f4f6;
+}
+
+body {
+    margin: 0;
+}
+
+.app-shell {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+}
