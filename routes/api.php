@@ -1,5 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\FolderController;
 
-/* Register the assignment's REST/JSON routes here. */
+Route::post('/folders', [FolderController::class, 'store']);
