@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Feature\Api;
 
+use App\Models\File;
 use App\Models\Folder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -57,6 +58,83 @@ class FolderTest extends TestCase
     }
 
     /**
+     * A test for browsing the root folder
+     */
+    public function test_browse_root(): void
+    {
+        $folder = Folder::create([
+            'name' => 'Documents',
+        ]);
+
+        Folder::create([
+            'name' => 'Work',
+            'parent_id' => $folder->id,
+        ]);
+
+        File::create([
+            'name' => 'root-file.txt',
+            'folder_id' => null,
+        ]);
+
+        File::create([
+            'name' => 'report.pdf',
+            'folder_id' => $folder->id,
+        ]);
+
+        $response = $this->getJson('/api/folders');
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('folder', null)
+            ->assertJsonCount(1, 'folders')
+            ->assertJsonCount(1, 'files')
+            ->assertJsonFragment([
+                'name' => 'Documents',
+                'parent_id' => null,
+            ])
+            ->assertJsonFragment([
+                'name' => 'root-file.txt',
+                'folder_id' => null,
+            ]);
+    }
+
+    /**
+     * A test for browsing a folder
+     */
+    public function test_browse_folder(): void
+    {
+        $folder = Folder::create([
+            'name' => 'Documents',
+        ]);
+
+        Folder::create([
+            'name' => 'Work',
+            'parent_id' => $folder->id,
+        ]);
+
+        File::create([
+            'name' => 'report.pdf',
+            'folder_id' => $folder->id,
+        ]);
+
+        $response = $this->getJson("/api/folders/{$folder->id}");
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('folder.id', $folder->id)
+            ->assertJsonCount(1, 'folders')
+            ->assertJsonCount(1, 'files')
+            ->assertJsonFragment([
+                'name' => 'Work',
+                'parent_id' => $folder->id,
+            ])
+            ->assertJsonFragment([
+                'name' => 'report.pdf',
+                'folder_id' => $folder->id,
+            ]);
+    }
+
+    /**
      * A validation for name
      */
     public function test_folder_name_is_required(): void {
@@ -96,6 +174,42 @@ class FolderTest extends TestCase
 
         $this->assertDatabaseMissing('folders', [
             'id' => $folder->id,
+        ]);
+    }
+
+    /**
+     * A test for deletion of child folders and files
+     */
+    public function test_parent_deletion_removes_child_folders_and_files(): void
+    {
+        $parent = Folder::create([
+            'name' => 'Documents',
+        ]);
+
+        $child = Folder::create([
+            'name' => 'Work',
+            'parent_id' => $parent->id,
+        ]);
+
+        $file = File::create([
+            'name' => 'report.pdf',
+            'folder_id' => $child->id,
+        ]);
+
+        $response = $this->deleteJson("/api/folders/{$parent->id}");
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseMissing('folders', [
+            'id' => $parent->id,
+        ]);
+
+        $this->assertDatabaseMissing('folders', [
+            'id' => $child->id,
+        ]);
+
+        $this->assertDatabaseMissing('files', [
+            'id' => $file->id,
         ]);
     }
 }

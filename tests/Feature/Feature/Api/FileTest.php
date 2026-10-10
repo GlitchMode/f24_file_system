@@ -109,9 +109,18 @@ class FileTest extends TestCase
      */
     public function test_exact_file_search(): void
     {
+        $folder = Folder::create([
+            'name' => 'Documents',
+        ]);
+
         File::create([
             'name' => 'report.pdf',
             'folder_id' => null,
+        ]);
+
+        File::create([
+            'name' => 'report.pdf',
+            'folder_id' => $folder->id,
         ]);
 
         File::create([
@@ -123,9 +132,48 @@ class FileTest extends TestCase
 
         $response
             ->assertOk()
+            ->assertJsonCount(2)
+            ->assertJsonFragment([
+                'name' => 'report.pdf',
+            ]);
+    }
+
+    /**
+     * A scoped search test
+     */
+    public function test_exact_scoped_file_search(): void
+    {
+        $folder = Folder::create([
+            'name' => 'Documents',
+        ]);
+
+        $otherFolder = Folder::create([
+            'name' => 'Archive',
+        ]);
+
+        File::create([
+            'name' => 'report.pdf',
+            'folder_id' => $folder->id,
+        ]);
+
+        File::create([
+            'name' => 'report.pdf',
+            'folder_id' => $otherFolder->id,
+        ]);
+
+        File::create([
+            'name' => 'report.pdf',
+            'folder_id' => null,
+        ]);
+
+        $response = $this->getJson("/api/files/search?name=report.pdf&folder_id={$folder->id}");
+
+        $response
+            ->assertOk()
             ->assertJsonCount(1)
             ->assertJsonFragment([
                 'name' => 'report.pdf',
+                'folder_id' => $folder->id,
             ]);
     }
 
@@ -145,6 +193,52 @@ class FileTest extends TestCase
             ->assertJsonCount(2)
             ->assertJsonFragment([
                 'name' => 'report.pdf',
+            ])
+            ->assertJsonMissing([
+                'name' => 'notes.txt',
             ]);
+    }
+
+    /**
+     * A suggestion prefix test
+     */
+    public function test_file_suggestions_only_match_prefix(): void
+    {
+        File::create(['name' => 'report.pdf']);
+        File::create(['name' => 'report-old.pdf']);
+        File::create(['name' => 'annual-report.pdf']);
+
+        $response = $this->getJson('/api/files/suggestions?q=report');
+
+        $response
+            ->assertOk()
+            ->assertJsonCount(2)
+            ->assertJsonFragment([
+                'name' => 'report.pdf',
+            ])
+            ->assertJsonFragment([
+                'name' => 'report-old.pdf',
+            ])
+            ->assertJsonMissing([
+                'name' => 'annual-report.pdf',
+            ]);
+    }
+
+    /**
+     * A suggestion limit test
+     */
+    public function test_file_suggestions_have_a_maximum_of_ten_results(): void
+    {
+        for ($i = 1; $i <= 12; $i++) {
+            File::create([
+                'name' => "report-{$i}.pdf",
+            ]);
+        }
+
+        $response = $this->getJson('/api/files/suggestions?q=report');
+
+        $response
+            ->assertOk()
+            ->assertJsonCount(10);
     }
 }
