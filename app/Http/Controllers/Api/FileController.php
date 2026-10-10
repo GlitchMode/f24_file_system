@@ -21,4 +21,36 @@ class FileController extends Controller
 
         return response()->json(null, 204);
     }
+
+    public function search(Request $request): JsonResponse {
+        $request->validate([
+            'name' => ['required', 'string'],
+            'folder_id' => ['nullable', 'integer', 'exists:folders,id'],
+        ]);
+
+        $query = File::query()
+            ->where('name', $request->query('name'));
+
+        if($request->has('folder_id')){
+            $query->where('folder_id', $request->query('folder_id'));
+        }
+
+        return response()->json(
+            $query->get()
+        );
+    }
+
+    public function suggestions(Request $request): JsonResponse {
+        $request->validate([
+            'q' => ['required', 'string'],
+        ]);
+
+        $files = File::query()
+            ->where('name', 'like', $request->query('q') . '%')
+            ->orderBy('name')
+            ->limit(10)
+            ->get();
+
+        return response()->json($files);
+    }
 }
