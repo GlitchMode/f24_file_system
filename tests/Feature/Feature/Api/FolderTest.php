@@ -80,4 +80,22 @@ class FolderTest extends TestCase
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['parent_id']);
     }
+
+    /**
+     * A test for deletion
+     */
+    public function test_folder_deletion(): void
+    {
+        $folder = Folder::create([
+            'name' => 'Documents',
+        ]);
+
+        $response = $this->deleteJson("/api/folders/{$folder->id}");
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseMissing('folders', [
+            'id' => $folder->id,
+        ]);
+    }
 }

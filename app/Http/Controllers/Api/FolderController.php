@@ -17,6 +17,13 @@ class FolderController extends Controller
         return response()->json($folder, 201);
     }
 
+    public function destroy(Folder $folder): JsonResponse
+    {
+        $folder->delete();
+
+        return response()->json(null, 204);
+    }
+
     public function browse(?Folder $folder = null) : JsonResponse {
         if($folder === null){
             return response()->json([

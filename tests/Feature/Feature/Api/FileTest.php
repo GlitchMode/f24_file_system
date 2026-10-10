@@ -3,6 +3,7 @@
 namespace Tests\Feature\Feature\Api;
 
 use App\Models\Folder;
+use App\Models\File;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -82,5 +83,24 @@ class FileTest extends TestCase
         $response
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['folder_id']);
+    }
+
+    /**
+     * A test for deletion
+     */
+    public function test_file_deletion(): void
+    {
+        $file = File::create([
+            'name' => 'report.pdf',
+            'folder_id' => null,
+        ]);
+
+        $response = $this->deleteJson("/api/files/{$file->id}");
+
+        $response->assertNoContent();
+
+        $this->assertDatabaseMissing('files', [
+            'id' => $file->id,
+        ]);
     }
 }

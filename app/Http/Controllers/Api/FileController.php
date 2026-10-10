@@ -15,4 +15,10 @@ class FileController extends Controller
 
         return response()->json($file, 201);
     }
+
+    public function destroy(File $file): JsonResponse {
+        $file->delete();
+
+        return response()->json(null, 204);
+    }
 }
