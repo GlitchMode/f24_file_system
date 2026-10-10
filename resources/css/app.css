@@ -1,15 +1,477 @@
 :root {
-    color: #1f2937;
-    font-family: Arial, sans-serif;
-    background: #f3f4f6;
+    color: #18212f;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #edf1f6;
+    font-synthesis: none;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 body {
     margin: 0;
+    min-width: 760px;
+    min-height: 100vh;
 }
 
-.app-shell {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 3rem 1.5rem;
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    color: inherit;
+}
+
+.file-manager {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top left, rgba(75, 119, 190, 0.09), transparent 35%),
+        #edf1f6;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+    min-height: 112px;
+    padding: 24px 40px;
+    color: #fff;
+    background: #172235;
+    box-shadow: 0 3px 12px rgba(17, 29, 47, 0.22);
+}
+
+.topbar h1,
+.workspace-heading h2,
+.dialog h2,
+.empty-state h3 {
+    margin: 0;
+}
+
+.topbar h1 {
+    font-size: 1.7rem;
+    letter-spacing: -0.03em;
+}
+
+.eyebrow {
+    margin: 0 0 4px;
+    color: #94a9c8;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.search {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    max-width: 760px;
+}
+
+.search-input-wrap {
+    position: relative;
+    flex: 1;
+}
+
+.search input,
+.search select,
+.dialog input {
+    border: 1px solid #cfd7e3;
+    outline: none;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.search input {
+    width: 100%;
+    height: 46px;
+    padding: 0 16px 0 42px;
+    border-radius: 7px 0 0 7px;
+    background: #fff;
+}
+
+.search input:focus,
+.search select:focus,
+.dialog input:focus {
+    border-color: #4f83cc;
+    box-shadow: 0 0 0 3px rgba(79, 131, 204, 0.18);
+    position: relative;
+    z-index: 1;
+}
+
+.search-icon {
+    position: absolute;
+    z-index: 2;
+    top: 9px;
+    left: 15px;
+    color: #6f7d91;
+    font-size: 1.35rem;
+}
+
+.search select {
+    height: 46px;
+    padding: 0 34px 0 14px;
+    border-left: 0;
+    color: #354258;
+    background: #f8fafc;
+}
+
+.search-button,
+.primary-button,
+.secondary-button {
+    border: 0;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 650;
+}
+
+.search-button {
+    padding: 0 22px;
+    border-radius: 0 7px 7px 0;
+    color: #fff;
+    background: #3d75c2;
+}
+
+.search-button:hover,
+.primary-button:hover {
+    background: #2f64ad;
+}
+
+.suggestions {
+    position: absolute;
+    z-index: 20;
+    top: 52px;
+    right: 0;
+    left: 0;
+    overflow: hidden;
+    padding: 6px;
+    border: 1px solid #d5dde9;
+    border-radius: 8px;
+    color: #263246;
+    background: #fff;
+    box-shadow: 0 16px 35px rgba(19, 34, 56, 0.18);
+}
+
+.suggestions button {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+}
+
+.suggestions button:hover {
+    background: #edf4ff;
+}
+
+.suggestions p {
+    margin: 0;
+    padding: 12px;
+    color: #758197;
+}
+
+.mini-file {
+    color: #5382c4;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 76px;
+    padding: 14px 40px;
+    border-bottom: 1px solid #d7dee9;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.breadcrumbs span {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.breadcrumbs button {
+    overflow: hidden;
+    padding: 7px 8px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    cursor: pointer;
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.breadcrumbs button:hover {
+    background: #e8eef7;
+}
+
+.separator {
+    color: #9aa6b8;
+}
+
+.toolbar-actions,
+.dialog-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.primary-button,
+.secondary-button {
+    padding: 10px 16px;
+}
+
+.primary-button {
+    color: #fff;
+    background: #3d75c2;
+}
+
+.secondary-button {
+    border: 1px solid #c8d1de;
+    background: #fff;
+}
+
+.secondary-button:hover {
+    background: #f1f4f8;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.58;
+}
+
+.error-banner {
+    margin: 18px 40px 0;
+    padding: 12px 16px;
+    border: 1px solid #efb4b4;
+    border-radius: 7px;
+    color: #8f2727;
+    background: #fff1f1;
+}
+
+.workspace {
+    min-height: calc(100vh - 188px);
+    padding: 34px 40px 60px;
+}
+
+.workspace-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 26px;
+}
+
+.workspace-heading h2 {
+    font-size: 1.35rem;
+}
+
+.workspace-heading p {
+    margin: 6px 0 0;
+    color: #6c788a;
+    font-size: 0.9rem;
+}
+
+.loading {
+    color: #577198;
+    font-size: 0.88rem;
+    font-weight: 650;
+}
+
+.file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(154px, 1fr));
+    gap: 16px;
+    align-content: start;
+    min-height: 430px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    min-height: 166px;
+    padding: 22px 14px 15px;
+    border: 1px solid #d9e0e9;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 2px 5px rgba(30, 45, 68, 0.04);
+    cursor: default;
+    text-align: center;
+    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.file-item:hover,
+.file-item:focus-visible {
+    border-color: #8fb0dc;
+    box-shadow: 0 7px 18px rgba(42, 78, 126, 0.11);
+    outline: none;
+    transform: translateY(-2px);
+}
+
+.folder-icon {
+    position: relative;
+    width: 72px;
+    height: 52px;
+    margin: 11px 0 19px;
+    border-radius: 6px;
+    background: #e6a53b;
+    box-shadow: inset 0 -5px 0 rgba(130, 78, 8, 0.1);
+}
+
+.folder-icon::before {
+    position: absolute;
+    top: -9px;
+    left: 5px;
+    width: 30px;
+    height: 14px;
+    border-radius: 5px 5px 0 0;
+    background: #d79429;
+    content: '';
+}
+
+.document-icon {
+    position: relative;
+    width: 54px;
+    height: 68px;
+    margin: 0 0 14px;
+    border: 2px solid #5a83ba;
+    border-radius: 5px;
+    background: #f8fbff;
+}
+
+.document-icon::before,
+.document-icon::after {
+    position: absolute;
+    right: 9px;
+    left: 9px;
+    height: 2px;
+    background: #9db5d4;
+    content: '';
+}
+
+.document-icon::before {
+    top: 27px;
+    box-shadow: 0 9px 0 #9db5d4;
+}
+
+.document-icon::after {
+    top: 45px;
+    right: 20px;
+}
+
+.item-name {
+    overflow: hidden;
+    width: 100%;
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item-type {
+    margin-top: 5px;
+    color: #7b8798;
+    font-size: 0.78rem;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    align-self: center;
+    padding: 70px 20px;
+    color: #647186;
+    text-align: center;
+}
+
+.empty-state > span {
+    display: block;
+    margin-bottom: 12px;
+    color: #91a2ba;
+    font-size: 3rem;
+}
+
+.empty-state p {
+    margin: 8px 0 0;
+}
+
+.context-menu {
+    position: fixed;
+    z-index: 50;
+    min-width: 170px;
+    padding: 6px;
+    border: 1px solid #ced7e3;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 14px 35px rgba(20, 34, 54, 0.2);
+}
+
+.context-menu button {
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+}
+
+.context-menu button:hover {
+    background: #eef3f9;
+}
+
+.context-menu .danger {
+    color: #b42323;
+}
+
+.context-menu .danger:hover {
+    background: #fff0f0;
+}
+
+.dialog-backdrop {
+    position: fixed;
+    z-index: 60;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(14, 23, 38, 0.5);
+}
+
+.dialog {
+    width: min(430px, 100%);
+    padding: 26px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(10, 20, 36, 0.28);
+}
+
+.dialog label {
+    display: block;
+    margin: 22px 0 7px;
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.dialog input {
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 7px;
+}
+
+.dialog-actions {
+    justify-content: flex-end;
+    margin-top: 24px;
 }

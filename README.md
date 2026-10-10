@@ -1,8 +1,8 @@
 # F24 File Browser
 
-Starter structure for the F24 Junior PHP Developer take-home exercise.
+A browser-based file manager built for the F24 Junior PHP Developer take-home exercise.
 
-This repository intentionally contains **only the project scaffold**. Folder/file creation, browsing, searching, suggestions, and deletion have not been implemented.
+The application supports nested folders, files, folder browsing, exact file search, prefix suggestions, and cascading deletion.
 
 ## Stack
 
@@ -36,8 +36,16 @@ routes/
   api.php              REST/JSON routes
   web.php              React application entry route
 tests/
-  Feature/Api/         API feature tests
+  Feature/Feature/Api/ API feature tests
 ```
+
+## Using the file manager
+
+- Double-click a folder to open it and use the breadcrumb to navigate back.
+- Right-click empty workspace space to create a folder or file.
+- Right-click a folder or file to delete it. Deleting a folder also deletes its contents.
+- Type in the search field to see up to 10 prefix suggestions.
+- Submit the search to find exact file-name matches across all files or only the current folder.
 
 ## Run with DDEV (recommended)
 
@@ -54,7 +62,7 @@ ddev artisan migrate
 ddev npm run dev
 ```
 
-Open the URL shown by `ddev describe`. This scaffold uses a loopback `nip.io` domain so DDEV can start without modifying the system hosts file.
+Open the URL shown by `ddev describe`. This project uses a loopback `nip.io` domain so DDEV can start without modifying the system hosts file.
 
 Run checks in another terminal:
 
@@ -108,21 +116,19 @@ npm run build
 
 ## Current status and assumptions
 
-- The architecture and tooling are prepared; the take-home functionality is incomplete by request.
+- Folder and file creation, browsing, deletion, exact search, and prefix suggestions are implemented.
 - SQLite is sufficient for the exercise and keeps setup small.
 - DDEV starts its standard database container, but the application itself uses the SQLite file in `database/database.sqlite`.
 - Authentication and authorization are intentionally excluded by the brief.
-- API endpoints should return JSON and use appropriate HTTP methods/status codes when implemented.
-- Happy-path feature tests should be added alongside each main API behavior.
+- The React frontend uses native `fetch()` and plain CSS.
+- Feature tests cover the main API happy paths and validation of parent references.
 
 ## Suggested next steps
 
-1. Design the folder/file data model and migration.
-2. Add Eloquent relationships and constraints.
-3. Add Form Requests and REST controllers/routes.
-4. Write API feature tests for the happy paths.
-5. Build the React browser and native `fetch()` service functions.
-6. Document completed behavior, assumptions, trade-offs, and remaining work here.
+1. Add frontend component tests and end-to-end browser tests.
+2. Add keyboard-accessible alternatives for all context-menu actions.
+3. Return folder paths with global search results instead of displaying only the folder ID.
+4. Add duplicate-name rules if the product requirements require them.
 
 ## GitHub
 
